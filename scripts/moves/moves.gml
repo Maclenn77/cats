@@ -1,5 +1,5 @@
 function run(agility){
-	if (agility > 2)
+	if (agility > 4)
 	{
 		sprite_index = spr_cat_run;
 		if (self.stamina > 0) 

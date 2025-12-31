@@ -1,1 +1,1 @@
-agility = 4
+agility = 6
