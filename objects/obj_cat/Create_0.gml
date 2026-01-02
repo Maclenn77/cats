@@ -7,7 +7,7 @@ move_y = 0;
 gravity = 1;
 hspeed = 0;
 vspeed = 0;
-jump_height = 3;
+jump_height = 4;
 
 alarm[0] = 180
 

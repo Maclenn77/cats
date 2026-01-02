@@ -16,22 +16,11 @@ var move = (key_right - key_left) * agility;
 if (move != 0) {
 	
 	run(agility);
-	image_xscale = (move > 0) ? 1 : -1;
-}
-
-// Free the cat if stuck in a wall
-if (place_meeting(x, y, obj_floor)) {
-    // Try to push up
-    var push_dist = 0;
-    while (place_meeting(x, y, obj_floor) && push_dist < 16) {
-        y -= 1;
-        push_dist++;
-    }
+	image_xscale = sign(move);
 }
 
 if (state == 0) {
     sprite_index = spr_cat_sleep;
-	mask_index = spr_cat_walk;
 }
 else if (state == 1) && (move = 0) {
     sprite_index = spr_cat_idle;
@@ -40,23 +29,7 @@ else if (state == 1) && (move = 0) {
 		stamina += 0.015
 	}
 }
-/*
-if keyboard_check(vk_right) && (state = 1)
-{
-	facing = 1;
-	run(agility);
-	image_xscale = facing;
-	x += facing * agility;
-}
 
-if keyboard_check(vk_left) && (state = 1)
-{
-	facing = -1;
-	run(agility);
-	image_xscale = facing;
-	x += facing * agility;
-}
-*/
 if keyboard_check_pressed(ord("A")) && (stamina > 0)
 {
 	sprite_index = spr_cat_attack;
@@ -88,19 +61,11 @@ if (place_meeting(x, y + vspeed, obj_floor)) {
 		y += sign(vspeed)
 	}
 	
-	vspeed = 0; 
-/*	if (keyboard_check_pressed(vk_space)) {
-		move_y += -jump_speed;
-		sprite_index = spr_cat_jump;
-		
-	} */
-	
+	vspeed = 0; 	
 		
 }
 
 y += vspeed;
-/*else if (move_y < 10) move_y += 1;*/
-
 
 move_and_collide(move_x, move_y, obj_floor);
 
@@ -112,4 +77,37 @@ if (is_grounded && key_up) {
 }
 
 y += vspeed;
+
+// Free the cat if stuck in a wall
+if (place_meeting(x, y, obj_floor)) {
+    var freed = false;
+    
+    // Try all four directions, starting with the shortest distances
+    var directions = [
+        {dx: 0, dy: -1},  // up
+        {dx: 0, dy: 1},   // down
+        {dx: -1, dy: 0},  // left
+        {dx: 1, dy: 0}    // right
+    ];
+    
+    for (var i = 0; i < array_length(directions); i++) {
+        var push_dist = 0;
+        var temp_x = x;
+        var temp_y = y;
+        
+        while (place_meeting(temp_x, temp_y, obj_floor) && push_dist < 16) {
+            temp_x += directions[i].dx;
+            temp_y += directions[i].dy;
+            push_dist++;
+        }
+        
+        // If we found a free spot, move there
+        if (!place_meeting(temp_x, temp_y, obj_floor)) {
+            x = temp_x;
+            y = temp_y;
+            freed = true;
+            break;
+        }
+    }
+}
 
